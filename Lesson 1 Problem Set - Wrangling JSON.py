@@ -50,9 +50,21 @@ def article_overview(kind, period):
     for each_article in data:
         for (key, value) in each_article.items():
             if key == 'section':
-                print (key, value)
-    #- return a list of URLs for all media entries with "format": "Standard Thumbnail"
+                #print (key, value)
+                titles.append({each_article['section']: each_article['title']})
 
+    #- return a list of URLs for all media entries with "format": "Standard Thumbnail"
+    #data is a list of dictionaries. Each dictionary is one article and its data
+    for each_article in data:
+        #each_article['media'] is a list of dictionaries. each dict is a list medias
+        for each_media in each_article['media']:
+            #each_media is a dictionary of medias. each dict is a medias data
+            #each media-metadata is a list of dictionaries. Each dict is the metadata info
+            for each_metadata in each_media['media-metadata']:
+                if each_metadata['format'] == "Standard Thumbnail":
+                    urls.append(each_metadata['url'])
+
+    #print len(urls)
     # YOUR CODE HERE
 
     return (titles, urls)
