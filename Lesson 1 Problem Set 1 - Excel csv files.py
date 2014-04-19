@@ -21,7 +21,7 @@ def open_zip(datafile):
 def parse_file(datafile):
     workbook = xlrd.open_workbook(datafile)
     sheet = workbook.sheet_by_index(0)
-    data = {}
+    data = []
     # YOUR CODE HERE
     # Remember that you can use xlrd.xldate_as_tuple(sometime, 0) to convert
     # Excel date to Python tuple of (year, month, day, hour, minute, second)
@@ -31,6 +31,7 @@ def parse_file(datafile):
 
     for row in range(1, 9):
         region = sheet.cell_value(0, row)
+
         #get data from column
         col = sheet.col_values(row, 1)
         #get max value of column
@@ -40,36 +41,28 @@ def parse_file(datafile):
         exceltime_max = time_col[max_index]
         maxtime = xlrd.xldate_as_tuple(exceltime_max, 0)
         #data[region] = {'Year': maxtime[0], 'Month': maxtime[1], 'Day': maxtime[2], 'Hour': maxtime[3], 'Max Load': max_value }
-        data[region] = {'Max Load': max_value, 'Year': maxtime[0], 'Month': maxtime[1], 'Day': maxtime[2], 'Hour': maxtime[3] }
+        data.append([region, maxtime[0], maxtime[1], maxtime[2],maxtime[3], max_value])
         #print region, data[region]
-    print 'parse file return data: '
-    print data
-    print 'end parse file return data'
+    #print 'parse file return data: '
+    #print data
+    #print 'end parse file return data'
     return data
 
 def save_file(data, filename):
     with open(filename, 'wb') as ofile:
         writer = csv.writer(ofile, delimiter="|")
         writer.writerow(["Station", "Year", "Month", "Day", "Hour", "Max Load"])
-        nextrow=[]
-        for (key, val) in data.items():
-            nextrow.append(key)
-            for (skey, sval) in val.items():
-                nextrow.append(sval)
-            #print 'nextrow: ', nextrow
-            writer.writerow(nextrow)
-            nextrow=[]
+        for each_row in data:
+            writer.writerow(each_row)
 
 def test1():
     # open_zip(datafile)
     data = parse_file(datafile)
-    print 'returned data: '
+    #print 'returned data: '
     #print data
-    for (each, key) in data.items():
-        print each, key
-        for (j,k) in key.items():
-            print j, k
-    print '---------------------'
+    #for each in data:
+    #    print each
+    #print '---------------------'
     save_file(data, outfile)
 
     ans = {'FAR_WEST': {'Max Load': "2281.2722140000024", 'Year': "2013", "Month": "6", "Day": "26", "Hour": "17"}}
@@ -78,12 +71,12 @@ def test1():
     with open(outfile) as of:
         csvfile = csv.DictReader(of, delimiter="|")
         for line in csvfile:
-            print line
+            #print line
             s = line["Station"]
             if s == 'FAR_WEST':
                 for field in fields:
-                    #assert ans[s][field] == line[field]
-                    pass
+                    assert ans[s][field] == line[field]
+                    #pass
                 #print 'LOL'
         
 test1()
