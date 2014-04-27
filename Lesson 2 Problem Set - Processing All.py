@@ -59,14 +59,62 @@ def process_file(f):
 
     with open("{}/{}".format(datadir, f), "r") as html:
 
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html.read())
+        #get the table we want
+        flightdata = soup.find("table", {'class': 'dataTDRight'})
+        #get all cells in the table
+        eachrow = flightdata.find_all("td")
+        cellcount = 0
+        rowcount = 0
+        #iterate through data (5 cells per row)
+        rowdata = []
+        finalrowdata=[]
+        for eachcell in eachrow:
 
+            #    continue
+            rowdata.append(eachcell.get_text())
+            cellcount += 1
+            if cellcount == 5:
+                print rowdata[0]
+                #skip header row and total rows
+                if rowdata[0] == "Year" or rowdata[1] == "TOTAL":
+                    rowdata = []
+                    cellcount = 0
+                    rowcount += 1
+                    print 'skipping row'
+                else:
+                    finalrowdata.append(rowdata)
+                    rowdata = []
+                    cellcount = 0
+                    rowcount += 1
+        print finalrowdata
+    # data = [{"courier": "FL",
+    #         "airport": "ATL",
+    #         "year": 2012,
+    #         "month": 12,
+    #         "flights": {"domestic": 100,
+    #                     "international": 100}
+    #         },
+    #         {"courier": "..."}
+    # ]
+        for eachrow in finalrowdata:
+            flights={}
+            # t1 = str(eachrow[2])
+            # print 'int: ', int(t1.replace(',', ''))
+            flights['domestic'] = int(str(eachrow[2].replace(',', '')))
+            flights['international'] = int(str(eachrow[3].replace(',', '')))
+            print 'flights: ', flights
+            info['year'] = int(str(eachrow[0]))
+            info['month'] = int(str(eachrow[1]))
+            info['flights'] = flights
+            data.append(info)
+    print 'data: ', data
     return data
 
 
 def test():
     print "Running a simple test..."
-    open_zip(datadir)
+    #open_zip(datadir)
     files = process_all(datadir)
     data = []
     for f in files:
