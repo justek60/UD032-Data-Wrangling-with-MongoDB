@@ -20,8 +20,34 @@ def split_file(filename):
     # As a hint - each patent declaration starts with the same line that was causing the error
     # The new files should be saved with filename in the following format:
     # "{}-{}".format(filename, n) where n is a counter, starting from 0.
+    #
+    filenumber = 0
+    startline = '<?xml version="1.0" encoding="UTF-8"?>'
+    firstline = True
+    #open file
+    filecontent = ''
+    f = open(filename, "r")
+    while True:
+        line = f.readline()
+        #were at end of file so exit wjile loop
+        if not line:
+            break
 
-    pass
+        #if we find a newfile line, write current contents to file and start again
+        if startline == line.rstrip("\r\n") and firstline is False:
+            with open("{}-{}".format(filename, filenumber), "w") as of:
+                of.write(filecontent)
+            filecontent = ''
+            filenumber += 1
+
+        filecontent += line
+        #set firstline to false after first line is read
+        firstline = False
+    #write final file
+    with open("{}-{}".format(filename, filenumber), "w") as of:
+                of.write(filecontent)
+    f.close()
+    return
 
 
 def test():
@@ -35,6 +61,6 @@ def test():
             f.close()
         except:
             print "Could not find file {}. Check if the filename is correct!".format(fname)
-
+    print 'all done'
 
 test()
