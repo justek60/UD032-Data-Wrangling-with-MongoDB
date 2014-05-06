@@ -22,15 +22,30 @@ CITIES = 'cities.csv'
 
 
 def fix_area(area):
-
     # YOUR CODE HERE
     if area == "NULL":
         return None
     #area is a string with two numbers separated by a |. lets split it
-    print area, type(area), "-->",
-    #multiple numbers are in a dictionary, hmmmmm
-    print area.split("|")
-    return area
+    #revove brackets if any
+    area = area.strip('{}')
+    #split up multiple values separated by |
+    area = area.split("|")
+    #return if only one number
+    if len(area) == 1:
+        return area
+    area_1 = area[0]
+    area_2 = area[1]
+    print area_1
+    #get part after decimal
+    area_1work = area_1.split('.')[1]
+    area_2work = area_2.split('.')[1]
+    #get rid of exp part of number
+    area_1work = area_1work.split('e')[0]
+    area_2work = area_2work.split('e')[0]
+    if len(area_1work) > len(area_2work):
+        return float(area_1)
+    else:
+        return float(area_2)
 
 
 
@@ -59,7 +74,7 @@ def test1():
     data = process_file(CITIES)
 
     print "Printing three example results:"
-    for n in range(5,8):
+    for n in range(5, 9):
         pprint.pprint(data[n]["areaLand"])
 
     assert data[8]["areaLand"] == 55166700.0
