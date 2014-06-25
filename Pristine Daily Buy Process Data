@@ -1,0 +1,46 @@
+__author__ = 'dad'
+from bs4 import BeautifulSoup
+
+stock = ['stock symbol', 'price', '20MA distance', 'blank1', 'exchange', 'blank2', 'average volume']
+stocks = {}
+
+with open('pristine_daily_setup_content.html', 'r') as fid:
+    soup = BeautifulSoup(fid)
+
+#row_data = soup.find_all('tr')
+table_data = soup.find_all('table')
+
+print "Tables found: ",
+print len(table_data)
+for i in range(len(table_data)):
+    print len(table_data[i]), type(table_data[i])
+
+# -----------------------
+# You're starting at the top level of your document each time you use find() or find_all(), so when you ask for, for
+# example, all the "td"` tags you're getting all the "td" tags in the document, not just those in the table and row
+# you have searched for. You might as well not search for those because they're not being used the way your code
+# is written.
+#
+# I think you want to do something like this:
+#
+# table1 = soup.find("table", border=1)
+# table2 = table1.find('tbody')
+# table3 = table2.find_all('tr')
+# Or, you know, something more like this, with more descriptive variable names to boot:
+#
+# rows = soup.find("table", border=1).find("tbody").find_all("tr")
+#
+# for row in rows:
+#     cells = row.find_all("td")
+#     rn = cells[0].get_text()
+#     # and so on
+#----------------------------------------
+
+#the data we want is in the third table
+row_data = table_data[2].find_all('tr')
+#print len(row_data)
+temp_list=[]
+print row_data[1]
+for each_row in row_data:
+    stock_cell = each_row.find('td')
+    print stock_cell.get_text()
