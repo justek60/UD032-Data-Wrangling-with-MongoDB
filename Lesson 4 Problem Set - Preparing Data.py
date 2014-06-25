@@ -52,6 +52,7 @@ FIELDS ={'rdf-schema#label': 'label',
          'kingdom_label': 'kingdom',
          'genus_label': 'genus'}
 
+#GET RID OF PARENTHESES AND CONTENTS
 regex = re.compile('\(.+?\)')
 
 def process_file(filename, fields):
@@ -83,7 +84,11 @@ def process_file(filename, fields):
                     #print 'new value: ', value
                     #print value[:paren]
 
-                if (each == 'kingdom_label'):
+                #if 'name' is "NULL" or contains non-alphanumeric characters, set it to the same value as 'label'.
+                elif each == 'name':
+
+
+                elif (each == 'kingdom_label'):
                     classification_dict['kingdom'] = value
                 elif (each == 'family_label'):
                     classification_dict['family'] = value
